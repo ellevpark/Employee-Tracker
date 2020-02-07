@@ -31,13 +31,15 @@ function start(){
       choices: ["View all Employees", "View All Employees by Department", "View all Employees by Manager", "Add Employee", "Remove Employee", "Update Employee Role", "Update Empoyee Manager"]
 
     }
+  
   ])
   .then (function(res){
     if (res.getInfo === "View all Employees"){
-      readEmployee() 
+      readAllEmployees() 
     }
   })
 }
+start();
 function addEmployee() {
   console.log("Inserting a new employee.\n");
   var query = connection.query(
@@ -86,7 +88,7 @@ function deleteEmployee() {
   );
 }
 
-function readEmployee() {
+function readAllEmployees() {
   console.log("Selecting all products...\n");
   connection.query("SELECT * FROM employee", function(err, res) {
     if (err) throw err;
