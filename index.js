@@ -1,5 +1,7 @@
-var mysql = require("mysql");
-var connection = mysql.createConnection({
+const mysql = require("mysql");
+const cTable = require('console.table');
+const inquirer = require ('inquirer'); 
+const connection = mysql.createConnection({
   host: "localhost",
 
   // Your port; if not 3306
@@ -16,21 +18,30 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
   if (err) throw err;
   console.log("connected as id " + connection.threadId + "\n");
-  addEmployee();
-  addDepartment(); 
-  addRoles();
+  start(); 
 });
 
+function start(){
+  inquirer
+  .prompt ([
+    {
+      type: "list", 
+      message: "What would you like to do?",
+      name: "getInfo",
+      choices: ["View all Employees", "View All Employees by Department", "View all Employees by Manager", "Add Employee", "Remove Employee", "Update Employee Role", "Update Empoyee Manager"]
+
+    }
+  ])
+  .then (function(res){
+    if (res.getInfo === "View all Employees"){
+      readEmployee() 
+    }
+  })
+}
 function addEmployee() {
   console.log("Inserting a new employee.\n");
   var query = connection.query(
-    "INSERT INTO employee SET ?",
-    {
-      first_name: "Ellen",
-      last_name: "Park",
-      role_id: 5,
-      manager_id: 3, 
-    },
+    "INSERT INTO employee SET ?", 
     function(err, res) {
       if (err) throw err;
       console.log(res.affectedRows + " product inserted!\n");
@@ -47,14 +58,6 @@ function updateEmployeeRoles() {
   console.log("Updating all Rocky Road quantities...\n");
   var query = connection.query(
     "UPDATE products SET ? WHERE ?",
-    [
-      {
-        role_id: 2
-      },
-      {
-        manager_id: 3
-      }
-    ],
     function(err, res) {
       if (err) throw err;
       console.log(res.affectedRows + " employee updated!\n");
