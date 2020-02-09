@@ -11,7 +11,7 @@ const connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
+  password: "Bootcamp!",
   database: "employee.DB"
 });
 
@@ -21,55 +21,133 @@ connection.connect(function(err) {
   start(); 
 });
 
+start();
+
 function start(){
   inquirer
   .prompt ([
     {
       type: "list", 
       message: "What would you like to do?",
-      name: "getInfo",
-      choices: ["View all Employees", "View All Employees by Department", "View all Employees by Manager", "Add Employee", "Remove Employee", "Update Employee Role", "Update Empoyee Manager"]
-
+      name: "start",
+      choices: ["View all Employees", "View All Employees by Department", "View all Employees by Manager", "Add Employee", "Remove Employee", "Update Employee Role", "Update Employee Manager"]
     }
-  
   ])
   .then (function(res){
-    if (res.getInfo === "View all Employees"){
-      readAllEmployees() 
+    switch (res.start){
+      case "View all Employees":
+      viewAllEmployees();
+      break; 
+    
+      case "View Employees by Department":
+      viewEmployeeByDept(); 
+      break; 
+    
+      case "Add Employee":
+      addEmployee();
+      break;
+    
+      case "Remove Employee": 
+      removeEmployee(); 
+      break;
+
+      case "Update Employee Role":
+      updateEmployeeRole(); 
+      break;
+
+      case "Update Employee Manager":
+      updateEmployeeManager(); 
+      break;
     }
   })
 }
-start();
-function addEmployee() {
-  console.log("Inserting a new employee.\n");
-  var query = connection.query(
-    "INSERT INTO employee SET ?", 
-    function(err, res) {
-      if (err) throw err;
-      console.log(res.affectedRows + " product inserted!\n");
-      // Call updateProduct AFTER the INSERT completes
-      updateEmployeeRoles();
-    }
-  );
 
-  // logs the actual query being run
-  console.log(query.sql);
+function viewAllEmployees() {
+  console.log("Selecting all products...\n");
+  connection.query("SELECT * FROM employee", function(err, res) {
+    if (err) throw err;
+    // Log all results of the SELECT statement
+    console.log(res);
+    connection.end();
+  });
 }
 
-function updateEmployeeRoles() {
-  console.log("Updating all Rocky Road quantities...\n");
-  var query = connection.query(
-    "UPDATE products SET ? WHERE ?",
-    function(err, res) {
-      if (err) throw err;
-      console.log(res.affectedRows + " employee updated!\n");
-      // Call deleteProduct AFTER the UPDATE completes
-      deleteEmployee();
-    }
-  );
+function addEmployee() {
+  console.log("Inserting a new employee.\n");
+  inquirer 
+    .prompt ([ 
+      {
+        type: "input", 
+        message: "First Name?",
+        name: "firstName",
+      },
+      {
+        type: "input", 
+        message: "Last Name?",
+        name: "lastName"
+      },
+      {
+        type: "list",
+        message: "What is the employee's role?",
+        name: "role", 
+        choices: ["Sales Person", "Lead Engineer", "Lawyer"]
+      },
+      {
+        type: "input", 
+        message: "Who is their manager?",
+        name: "employeeManager"
+      }
+    ])
+    .then (function(res){
+      const query = connection.query(
+        "INSERT INTO employee SET ?", 
+        {
+          firstName: res.firstName, 
+          lastName: res.lastName,
+          role: res.role,
+          manager: res.employeeManager, 
+        },
+        function(err, res) {
+          if (err) throw err;
+          console.log( "Employee inserted!\n");
+          // Call updateProduct AFTER the INSERT completes
+          start (); 
+        }
+      );    
+    })
+  }
 
-  // logs the actual query being run
-  console.log(query.sql);
+function viewEmployeeByDept(){
+  inquirer
+  .prompt ({
+    name: "viewDept", 
+    type: "list", 
+    message: "What department would you like to view?",
+    choices: [
+      "Sales",
+      "Engineering", 
+      "Legal"
+    ]
+  })
+  .then(function(res){
+    switch(res.viewDept){
+      case "View Sales Employees":
+      viewSalesEmployees(); 
+      break;
+
+      case "View Engineering Employees":
+      viewEngineeringEmployees(); 
+      break;
+
+      case "View Legal Employees":
+      viewLegalEmployees(); 
+      break;
+    }
+
+  })
+}
+function viewSalesEmployees(){
+  
 }
 
 function deleteEmployee() {
@@ -88,12 +166,4 @@ function deleteEmployee() {
   );
 }
 
-function readAllEmployees() {
-  console.log("Selecting all products...\n");
-  connection.query("SELECT * FROM employee", function(err, res) {
-    if (err) throw err;
-    // Log all results of the SELECT statement
-    console.log(res);
-    connection.end();
-  });
-}
+

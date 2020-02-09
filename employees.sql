@@ -12,7 +12,7 @@ CREATE TABLE employee (
   manager_id INTEGER (10) NOT NULL,
   PRIMARY KEY (id)
 );
-CREATE TABLE role (
+CREATE TABLE roles (
   id INTEGER AUTO_INCREMENT,
   title VARCHAR(30),
   salary DECIMAL (30.2),
@@ -25,14 +25,7 @@ CREATE TABLE department (
   PRIMARY KEY (id)
 );
 
-INSERT INTO products (flavor, price, quantity)
-VALUES ("vanilla", 2.50, 100);
 
-INSERT INTO products (flavor, price, quantity)
-VALUES ("chocolate", 3.10, 120);
-
-INSERT INTO products (flavor, price, quantity)
-VALUES ("strawberry", 3.25, 75);
 
 -- ### Alternative way to insert more than one row
 -- INSERT INTO products (flavor, price, quantity)
