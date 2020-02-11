@@ -10,7 +10,6 @@ const connection = mysql.createConnection({
   // Your username
   user: "root",
 
-  // Your password
   password: "Bootcamp!",
   database: "employee_DB"
 });
@@ -31,16 +30,12 @@ function start(){
       choices: [
       "Add Employee", 
       "View all Employees", 
-      "Remove Employee", 
       "Add Department", 
       "View all Departments",
       "View all Employees by Department", 
-      "Delete Department",
       "Add Roles", 
-      "Delete Roles",
       "View all Roles", 
       "Update Employee Role", 
-      "Update Employee Manager",
       "Exit"
     ]
     }
@@ -259,9 +254,6 @@ function viewAllRoles(){
 
 }
 function updateEmployeeRole(){
-
-}
-function updateEmployeeManager(){
 
 }
 
