@@ -30,9 +30,9 @@ function start(){
       choices: [
       "Add Employee", 
       "View all Employees", 
+      "Remove Employee",
       "Add Department", 
       "View all Departments",
-      "View all Employees by Department", 
       "Add Roles", 
       "View all Roles", 
       "Update Employee Role", 
@@ -46,7 +46,7 @@ function start(){
       case "Add Employee":
       addEmployee();
       break;
-
+     
       case "View all Employees":
       viewAllEmployees();
       break; 
@@ -62,21 +62,9 @@ function start(){
       case "View all Departments":
       viewAllDept();
       break;
-    
-      case "View Employees by Department":
-      viewEmployeeByDept(); 
-      break; 
-    
-      case "Delete Department": 
-      deleteDept(); 
-      break;
 
       case "Add Roles": 
       addRole(); 
-      break;
-
-      case "Delete Roles": 
-      deleteRole(); 
       break;
 
       case "View all Roles": 
@@ -87,17 +75,12 @@ function start(){
       updateEmployeeRole(); 
       break;
 
-      case "Update Employee Manager":
-      updateEmployeeManager(); 
-      break;
-
       case "Exit":
       connection.end(); 
       break; 
     }
   })
 }
-
 
 function addEmployee() {
 console.log("Inserting a new employee.\n");
@@ -106,46 +89,41 @@ inquirer
     {
       type: "input", 
       message: "First Name?",
-      name: "firstName",
+      name: "first_name",
     },
     {
       type: "input", 
       message: "Last Name?",
-      name: "lastName"
+      name: "last_name"
     },
     {
       type: "list",
       message: "What is the employee's role?",
-      name: "role", 
-      choices: ["Sales Person", "Lead Engineer", "Lawyer"]
+      name: "role_id", 
+      choices: [1,2,3]
     },
     {
       type: "input", 
       message: "Who is their manager?",
-      name: "employeeManager"
+      name: "manager_id"
     }
   ])
   .then (function(res){
     const query = connection.query(
-      "INSERT INTO employee SET ?", 
-      {
-        firstName: res.firstName, 
-        lastName: res.lastName,
-        role: res.role,
-        manager: res.employeeManager, 
-      },
+      "INSERT INTO employees SET ?", 
+     res,
       function(err, res) {
         if (err) throw err;
-        console.log( "Employee inserted!\n");
-        // Call updateProduct AFTER the INSERT completes
+        console.log( "Employee added!\n");
+
         start (); 
       }
     );    
   })
 }
 function viewAllEmployees() {
-  console.log("Selecting all products...\n");
-  connection.query("SELECT * FROM employees", 
+
+  connection.query("SELECT employees.first_name, employees.last_name, roles.title AS \"role\", managers.first_name AS \"manager\" FROM employees LEFT JOIN roles ON employees.role_id = roles.id LEFT JOIN employees managers ON employees.manager_id = managers.id GROUP BY employees.id",  
   function(err, res) {
     if (err) throw err;
     // Log all results of the SELECT statement
@@ -155,8 +133,37 @@ function viewAllEmployees() {
 }
 
 function removeEmployee(){
-  //remove employee
-}
+  let employeeList = [];
+  connection.query(
+    "SELECT employees.first_name, employees.last_name FROM employees", (err,res) => {
+      for (let i = 0; i < res.length; i++){
+        employeeList.push(res[i].first_name + " " + res[i].last_name);
+      }
+  inquirer 
+  .prompt ([ 
+    {
+      type: "list", 
+      message: "Which employee would you like to delete?",
+      name: "employee",
+      choices: employeeList
+
+    },
+  ])
+  .then (function(res){
+    const query = connection.query(
+      `DELETE FROM employees WHERE concat(first_name, ' ' ,last_name) = '${res.employee}'`,
+        function(err, res) {
+        if (err) throw err;
+        console.log( "Employee deleted!\n");
+    start();
+    });
+    });
+    }
+      );
+      };
+
+
+  
 
 function addDept(){
   inquirer
@@ -175,7 +182,7 @@ function addDept(){
         name: res.deptName
       }, 
       function(err, res){
-        connection.query("SELECT * FRO departments", function(err, res){
+        connection.query("SELECT * FROM departments", function(err, res){
           console.table(res); 
           start(); 
         })
