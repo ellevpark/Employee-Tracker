@@ -155,15 +155,12 @@ function removeEmployee(){
         function(err, res) {
         if (err) throw err;
         console.log( "Employee deleted!\n");
-    start();
+     start();
     });
     });
     }
       );
       };
-
-
-  
 
 function addDept(){
   inquirer
@@ -192,39 +189,12 @@ function addDept(){
 }
 
 function viewAllDept(){
-  // view dept
+connection.query ("SELECT * FROM departments", function(err, res){
+  console.table(res);
+  start();
+})
 }
 
-function viewEmployeeByDept(){
-  let departments= [];
-  connection.query ("SELECT name FROM departments", function(err, res){
-    console.log (res); 
-    dept.forEach(element => {
-      departments.push(res[i].name); 
-    });
-  })
-  inquirer
-  .prompt ({
-    name: "viewDept", 
-    type: "list", 
-    message: "What department would you like to view?",
-    choices: departments 
-  })
-  .then(function(res){
-  console.log (res.deptName)
-  connection.query ("SELECT id FROM departments WHERE name = `${res.deptName}`"), 
-  function(err,res){
-    connection.query("SELECT * FROM employees, roles.title, roles.salary, departments.name FROM ((roles INNER JOIN departments ON departments.id = roles.department_id) INNER JOIN employees ON roles.id = employees.role_id) WHERE department_id = `${res[0].id} "),
-    function(err, res){
-      console.table (res); 
-      start();
-    }
-   }
-  })
-}
-function deleteDept (){
-  
-}
 function addRole() {
 inquirer
 .prompt([
@@ -254,14 +224,40 @@ inquirer
   )
 })
 }
-function updateRoleDepartment(){
 
-}
 function viewAllRoles(){
-
+connection.query("SELECT roles.* departments.name FROM roles LEFT JOIN departments ON departments.id = roles.department_id", function (err,res){
+  console.table(res);
+  start();
+}
+)
 }
 function updateEmployeeRole(){
-
+let employees= []; 
+connection.query("SELECT first_name, last_name FROM employees",
+function(err,res){
+  for (let i=0; i <res.length; i++){
+    employees.push(res[i].first_name + " " + res[i].last_name);
+  }
+  inquirer
+  .prompt([
+    {
+      type: "list",
+      name: "employeeName",
+      message: "Which employee's role would you like to update?", 
+      choices: employees
+    }
+  ])
+  .then (function(res){
+    connection.query("SELECT id FROM employees WHERE concat(employees.first_name, ' ' , last_name) = '${res.employeeName}'",
+    function (err, res){
+      console.log(res);
+      updateRole(res);
+    }
+    );
+  })
+}
+)
 }
 
 
