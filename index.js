@@ -250,14 +250,16 @@ function viewAllRoles(){
   }
   )
   }
-  
+
 function updateEmployeeRole(){
-let employees= []; 
-connection.query("SELECT first_name, last_name FROM employees",
+​
+connection.query("SELECT first_name, last_name, id FROM employees",
 function(err,res){
-  for (let i=0; i <res.length; i++){
-    employees.push(res[i].first_name + " " + res[i].last_name);
-  }
+  // for (let i=0; i <res.length; i++){
+  //   employees.push(res[i].first_name + " " + res[i].last_name);
+  // }
+  let employees = res.map(employee => ({name: employee.first_name + " " + employee.last_name, value: employee.id}))
+​
   inquirer
   .prompt([
     {
@@ -265,18 +267,25 @@ function(err,res){
       name: "employeeName",
       message: "Which employee's role would you like to update?", 
       choices: employees
+    },
+    {
+      type: "input",
+      name: "role",
+      message: "What is your new role?"
     }
   ])
   .then (function(res){
-    connection.query("SELECT id FROM employees WHERE concat(employees.first_name, ' ' , last_name) = '${res.employeeName}'",
+    connection.query(`UPDATE employees SET role_id = ${res.role} WHERE id = ${res.employeeName}`,
     function (err, res){
       console.log(res);
-      updateRole(res);
+      //updateRole(res);
+      start()
     }
     );
   })
 }
 )
 }
+
 
 
