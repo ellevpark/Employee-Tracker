@@ -242,14 +242,15 @@ inquirer
 })
 }
 
-
 function viewAllRoles(){
-connection.query("SELECT roles.* departments.name FROM roles LEFT JOIN departments ON departments.id = roles.department_id", function (err,res){
-  console.table(res);
-  start();
-}
-)
-}
+  connection.query("SELECT roles.*, departments.name FROM roles LEFT JOIN departments ON departments.id = roles.department_id", function (err,res){
+    if (err) throw err;
+    console.table(res);
+    start();
+  }
+  )
+  }
+  
 function updateEmployeeRole(){
 let employees= []; 
 connection.query("SELECT first_name, last_name FROM employees",
