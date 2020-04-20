@@ -35,6 +35,6 @@ The user will be able to :
 ## Link
 
 Below is the link to the app.
-https://ellevpark.github.io/HW-12/
+https://ellevpark.github.io/Employee-Tracker/
 
 
