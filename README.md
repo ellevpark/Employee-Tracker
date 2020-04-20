@@ -27,7 +27,9 @@ The user will be able to :
 ## How to use
 
 <ol>
-<li>Run node server.js in your terminal</li>
+<li>Run seed file in MySQL Workbench or an equivalent if you would like starting data </li>
+<li>Run node index.js in your terminal to start the application</li>
+
 </ol>
 
 ## Link
